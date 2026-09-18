@@ -8,14 +8,26 @@ namespace KnowledgeApp.Api.Tests;
 
 public class EfSkillServiceTests
 {
-    private static EfSkillService CreateService(out SkillAcademyDbContext db)
+    private static EfSkillService CreateService(out SkillAcademyDbContext db, IClaudeSkillFileStore? fileStore = null)
     {
         var options = new DbContextOptionsBuilder<SkillAcademyDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
         db = new SkillAcademyDbContext(options);
-        return new EfSkillService(db, new NullClaudeSkillFileStore());
+        return new EfSkillService(db, fileStore ?? new NullClaudeSkillFileStore());
+    }
+
+    private class FakeClaudeSkillFileStore(IReadOnlyList<DiskSkill> diskSkills) : IClaudeSkillFileStore
+    {
+        public IReadOnlyList<DiskSkill> ReadAll() => diskSkills;
+        public void Write(Skill skill)
+        {
+        }
+        public void Delete(string slug)
+        {
+        }
+        public bool Exists(string slug) => true;
     }
 
     [Fact]
@@ -89,5 +101,29 @@ public class EfSkillServiceTests
         var service = CreateService(out _);
 
         Assert.False(await service.DeleteAsync(999));
+    }
+
+    [Fact]
+    public async Task SyncAsync_SkipsImport_WhenDiskSlugDiffersOnlyByCaseFromExistingSlug()
+    {
+        var fileStore = new FakeClaudeSkillFileStore([
+            new DiskSkill("fix-PR-comments", "Fix PR Comments", "Resolves PR comments.", "body")
+        ]);
+        var service = CreateService(out var db, fileStore);
+        db.Skills.Add(new Skill
+        {
+            Name = "Fix Pr Comments",
+            Category = "Claude Skill",
+            Purpose = "Resolves PR comments.",
+            HowBuilt = "body",
+            TechTags = ["claude-skill"],
+            Slug = "fix-pr-comments"
+        });
+        await db.SaveChangesAsync();
+
+        var result = await service.SyncAsync();
+
+        Assert.Equal(0, result.ImportedFromDisk);
+        Assert.Single(await service.GetAllAsync());
     }
 }

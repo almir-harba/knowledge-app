@@ -1,9 +1,9 @@
 ---
-name: skill-academy-api
+name: implement-backend-api
 description: "Practice designing and documenting a REST API: modeling a domain, CRUD endpoints, validation, and DI."
 ---
 
-# Skill Academy API
+# Implement Backend API
 
 .NET 10 minimal API backed by SQL Server via EF Core, plus xUnit unit and integration tests.
 
