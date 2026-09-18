@@ -69,7 +69,9 @@ public class EfSkillService(SkillAcademyDbContext db, IClaudeSkillFileStore skil
 
     public async Task<SyncResult> SyncAsync()
     {
-        var existingSlugs = await db.Skills.Select(s => s.Slug).ToListAsync();
+        var existingSlugs = new HashSet<string>(
+            await db.Skills.Select(s => s.Slug).ToListAsync(),
+            StringComparer.OrdinalIgnoreCase);
         var diskSkills = skillFiles.ReadAll();
 
         var imported = 0;
