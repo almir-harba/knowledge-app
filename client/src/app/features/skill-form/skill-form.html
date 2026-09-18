@@ -1,0 +1,97 @@
+<div class="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
+  <a routerLink="/" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+    &larr; Back to all skills
+  </a>
+
+  <h1 class="mt-4 text-2xl font-bold text-slate-900">
+    {{ isEditing ? 'Edit Skill' : 'Add a Skill' }}
+  </h1>
+  <p class="mt-1 text-sm text-slate-500">
+    Capture what you built, why it matters, and how it works.
+  </p>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    class="mt-6 flex flex-col gap-5 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8"
+  >
+    <div>
+      <label for="name" class="block text-sm font-medium text-slate-700">Name</label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="e.g. Docker Multi-Stage Builds"
+        class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+      />
+    </div>
+
+    <div>
+      <label for="category" class="block text-sm font-medium text-slate-700">Category</label>
+      <select
+        id="category"
+        formControlName="category"
+        class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+      >
+        @for (category of categories; track category) {
+          <option [value]="category">{{ category }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label for="purpose" class="block text-sm font-medium text-slate-700">Purpose</label>
+      <textarea
+        id="purpose"
+        formControlName="purpose"
+        rows="2"
+        placeholder="What problem does this skill solve? Why does it matter?"
+        class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+      ></textarea>
+    </div>
+
+    <div>
+      <label for="howBuilt" class="block text-sm font-medium text-slate-700">How it's built</label>
+      <textarea
+        id="howBuilt"
+        formControlName="howBuilt"
+        rows="4"
+        placeholder="Tools, architecture, key steps..."
+        class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+      ></textarea>
+    </div>
+
+    <div>
+      <label for="techTags" class="block text-sm font-medium text-slate-700">
+        Tech tags <span class="font-normal text-slate-400">(comma-separated)</span>
+      </label>
+      <input
+        id="techTags"
+        type="text"
+        formControlName="techTags"
+        placeholder="dotnet, angular, tailwindcss"
+        class="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+      />
+    </div>
+
+    @if (submitError()) {
+      <p class="text-sm text-red-600">{{ submitError() }}</p>
+    }
+
+    <div class="flex gap-3 border-t border-slate-100 pt-5">
+      <button
+        type="submit"
+        [disabled]="saving()"
+        class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 disabled:opacity-50"
+      >
+        {{ saving() ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Skill' }}
+      </button>
+      <a
+        routerLink="/"
+        class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+      >
+        Cancel
+      </a>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,67 @@
+<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+  <a routerLink="/" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+    &larr; Back to all skills
+  </a>
+
+  @if (notFound()) {
+    <p class="mt-10 text-center text-sm text-slate-500">Skill not found.</p>
+  } @else if (skill(); as skill) {
+    <div class="mt-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <h1 class="text-2xl font-bold text-slate-900">{{ skill.name }}</h1>
+        <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-800">
+          {{ skill.category }}
+        </span>
+      </div>
+
+      <p class="mt-1 text-xs text-slate-400">
+        Added {{ skill.createdAt | date: 'medium' }}
+      </p>
+      <code class="mt-1 block text-xs text-slate-400">.claude/skills/{{ skill.slug }}/SKILL.md</code>
+
+      <section class="mt-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Purpose</h2>
+        <p class="mt-2 text-slate-700">{{ skill.purpose }}</p>
+      </section>
+
+      <section class="mt-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">
+          How it's built
+        </h2>
+        <p class="mt-2 whitespace-pre-line text-slate-700">{{ skill.howBuilt }}</p>
+      </section>
+
+      @if (skill.techTags.length > 0) {
+        <section class="mt-6">
+          <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Tech</h2>
+          <div class="mt-2 flex flex-wrap gap-1.5">
+            @for (tag of skill.techTags; track tag) {
+              <span class="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                {{ tag }}
+              </span>
+            }
+          </div>
+        </section>
+      }
+
+      <div class="mt-8 flex gap-3 border-t border-slate-100 pt-6">
+        <a
+          [routerLink]="['/skills', skill.id, 'edit']"
+          class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+        >
+          Edit
+        </a>
+        <button
+          type="button"
+          (click)="deleteSkill()"
+          [disabled]="deleting()"
+          class="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  } @else {
+    <p class="mt-10 text-center text-sm text-slate-500">Loading...</p>
+  }
+</div>

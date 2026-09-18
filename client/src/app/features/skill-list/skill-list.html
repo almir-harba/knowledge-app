@@ -1,0 +1,64 @@
+<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Your Skills</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        Everything you've added: what it's for, and how it's built.
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <button
+        type="button"
+        (click)="syncSkills()"
+        [disabled]="syncing()"
+        class="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50"
+      >
+        {{ syncing() ? 'Syncing...' : '⟳ Sync Claude Skills' }}
+      </button>
+      <a
+        routerLink="/skills/new"
+        class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+      >
+        + Add Skill
+      </a>
+    </div>
+  </div>
+
+  @if (syncMessage()) {
+    <p class="mt-3 text-sm text-slate-500">{{ syncMessage() }}</p>
+  }
+
+  <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+    <input
+      type="search"
+      placeholder="Search by name, purpose, or tag..."
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:max-w-sm"
+      [ngModel]="search()"
+      (ngModelChange)="search.set($event)"
+    />
+    <select
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:max-w-xs"
+      [ngModel]="selectedCategory()"
+      (ngModelChange)="selectedCategory.set($event)"
+    >
+      <option value="All">All categories</option>
+      @for (category of skillService.categories(); track category) {
+        <option [value]="category">{{ category }}</option>
+      }
+    </select>
+  </div>
+
+  @if (skillService.loading()) {
+    <p class="mt-10 text-center text-sm text-slate-500">Loading skills...</p>
+  } @else if (skillService.error()) {
+    <p class="mt-10 text-center text-sm text-red-600">{{ skillService.error() }}</p>
+  } @else if (filteredSkills().length === 0) {
+    <p class="mt-10 text-center text-sm text-slate-500">No skills match your filters yet.</p>
+  } @else {
+    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      @for (skill of filteredSkills(); track skill.id) {
+        <app-skill-card [skill]="skill" />
+      }
+    </div>
+  }
+</div>

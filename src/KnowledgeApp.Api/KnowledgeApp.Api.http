@@ -1,0 +1,39 @@
+@KnowledgeApp.Api_HostAddress = http://localhost:5199
+
+GET {{KnowledgeApp.Api_HostAddress}}/api/skills/
+Accept: application/json
+
+###
+
+GET {{KnowledgeApp.Api_HostAddress}}/api/skills/1
+Accept: application/json
+
+###
+
+POST {{KnowledgeApp.Api_HostAddress}}/api/skills/
+Content-Type: application/json
+
+{
+  "name": "Prompt Engineering",
+  "category": "AI",
+  "purpose": "Get more reliable, targeted output from LLMs.",
+  "howBuilt": "Iterating on system prompts and few-shot examples, testing against real inputs.",
+  "techTags": ["llm", "prompting"]
+}
+
+###
+
+PUT {{KnowledgeApp.Api_HostAddress}}/api/skills/1
+Content-Type: application/json
+
+{
+  "name": "Skill Academy API (edited)",
+  "category": "Backend",
+  "purpose": "Updated purpose text.",
+  "howBuilt": "Updated implementation notes.",
+  "techTags": ["dotnet", "minimal-api"]
+}
+
+###
+
+DELETE {{KnowledgeApp.Api_HostAddress}}/api/skills/1
